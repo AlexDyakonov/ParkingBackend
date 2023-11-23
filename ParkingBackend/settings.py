@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     # Django addons and modules
     'rest_framework',
     "corsheaders",
+    'drf_yasg',
     # Custom apps
 ]
 
