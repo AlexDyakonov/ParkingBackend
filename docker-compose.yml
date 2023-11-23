@@ -13,11 +13,13 @@ services:
       - "127.0.0.1:5432:5432"
   backend:
     restart: unless-stopped
-    build: 
+    build:
       dockerfile: Dockerfile
       context: .
     image: backend_docker:latest
     container_name: backend_docker
+    ports:
+      - "8000:8000"
     depends_on:
       - database
     volumes:
@@ -31,5 +33,3 @@ services:
       - LETSENCRYPT_HOST=${ALLOWED_HOST}
     command: >
       bash -c "python manage.py collectstatic --noinput && python manage.py migrate  && gunicorn -b 0.0.0.0:8000 ParkingBackend.wsgi:application"
-
-volumes:
