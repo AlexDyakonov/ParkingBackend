@@ -1,4 +1,5 @@
 .env
+staticfiles
 
 # Django #
 *.log
