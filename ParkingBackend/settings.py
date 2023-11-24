@@ -21,7 +21,6 @@ ALLOWED_HOSTS = ['*',]
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -32,6 +31,8 @@ INSTALLED_APPS = [
     'rest_framework',
     "corsheaders",
     'drf_yasg',
+    'jazzmin',
+    'django.contrib.admin',
     # Custom apps
     'api.apps.ApiConfig'
 ]
@@ -143,6 +144,14 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:8080",
     "http://127.0.0.1:9000",
 ]
+
+# Jazzmin
+
+JAZZMIN_SETTINGS = {
+    'site_header':"Оптимизация парковочных мест",
+    'site_brand': "Шампиньоны",
+    'copyright': "@Шампиньоны",
+}
 
 # Logging
 
