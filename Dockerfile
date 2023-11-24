@@ -16,11 +16,12 @@ RUN useradd -rms /bin/bash ParkingBackend && chmod 777 /opt /run
 
 WORKDIR /ParkingBackend
 
-COPY --chown=ParkingBackend:ParkingBackend . .
-RUN chown -R ParkingBackend:ParkingBackend /ParkingBackend && chmod -R 755 /ParkingBackend
+COPY --chown=ParkingBackend:ParkingBackend requirements.txt .
 
 RUN pip install -r requirements.txt
-
 RUN pip install gunicorn
+
+COPY --chown=ParkingBackend:ParkingBackend . .
+RUN chown -R ParkingBackend:ParkingBackend /ParkingBackend && chmod -R 755 /ParkingBackend
 
 CMD ["gunicorn","-b","0.0.0.0:8000","ParkingBackend.wsgi:application"]
