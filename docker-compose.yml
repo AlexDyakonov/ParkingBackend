@@ -8,7 +8,7 @@ services:
     volumes:
       - ~/.pg/pg_data/backend:/var/lib/postgresql/data
     env_file:
-      - .env
+      - .env.docker
     ports:
       - "127.0.0.1:5432:5432"
   backend:
@@ -27,7 +27,7 @@ services:
       - ./media:/ParkingBackend/media:consistent
       - ./ParkingBackend/settings.py:/ParkingBackend/ParkingBackend/settings.py:consistent
     env_file:
-      - .env
+      - .env.docker
     environment:
       - VIRTUAL_HOST=${ALLOWED_HOST}
       - LETSENCRYPT_HOST=${ALLOWED_HOST}

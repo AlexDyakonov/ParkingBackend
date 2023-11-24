@@ -1,5 +1,7 @@
 .env
+.env.docker
 staticfiles
+static
 
 # Django #
 *.log
