@@ -8,16 +8,18 @@ services:
     volumes:
       - ~/.pg/pg_data/backend:/var/lib/postgresql/data
     env_file:
-      - .env
+      - .env.docker
     ports:
       - "127.0.0.1:5432:5432"
   backend:
     restart: unless-stopped
-    build: 
+    build:
       dockerfile: Dockerfile
       context: .
     image: backend_docker:latest
     container_name: backend_docker
+    ports:
+      - "8000:8000"
     depends_on:
       - database
     volumes:
@@ -25,11 +27,9 @@ services:
       - ./media:/ParkingBackend/media:consistent
       - ./ParkingBackend/settings.py:/ParkingBackend/ParkingBackend/settings.py:consistent
     env_file:
-      - .env
+      - .env.docker
     environment:
       - VIRTUAL_HOST=${ALLOWED_HOST}
       - LETSENCRYPT_HOST=${ALLOWED_HOST}
     command: >
       bash -c "python manage.py collectstatic --noinput && python manage.py migrate  && gunicorn -b 0.0.0.0:8000 ParkingBackend.wsgi:application"
-
-volumes:
