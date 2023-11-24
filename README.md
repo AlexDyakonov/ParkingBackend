@@ -5,11 +5,13 @@
     DJANGO_SECRET_KEY=секретный django ключ
     ALLOWED_HOST=127.0.0.1
     # Если не указывать POSTGRES конфиги, будет использована sqlite
-    POSTGRES_DB=db_name
+    POSTGRES_HOST=db_host #database при запуске с docker
+    POSTGRES_DB=db_name #database при запуске с docker
     POSTGRES_USER=db_username
     POSTGRES_PASSWORD=db_pass
-    POSTGRES_HOST=db_host
     POSTGRES_PORT=db_port
+    NGINX_EXTERNAL_PORT=80
+    NGINX_EXTERNAL_SSL_PORT=443
 
 Для запуска в докере необходимо создать .env.docker
 

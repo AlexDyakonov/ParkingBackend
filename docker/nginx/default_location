@@ -1,0 +1,7 @@
+location /static/ {
+    alias /ParkingBackend/static/;
+}
+
+location /media/ {
+    alias /ParkingBackend/media/;
+}
