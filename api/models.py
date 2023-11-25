@@ -3,6 +3,7 @@ from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 from django.db.models import F
 
+
 class Coordinate(models.Model):
     longitude = models.DecimalField(max_digits=10, decimal_places=7)
     latitude = models.DecimalField(max_digits=10, decimal_places=7)
@@ -69,6 +70,7 @@ class Price(models.Model):
     def __str__(self):
         return f"Price ({self.vehicle_type}, Min: {self.min_price}, Max: {self.max_price})"
 
+
 class Parking(models.Model):
     blocked = models.BooleanField(null=False, default=False)
     aggregating = models.BooleanField(null=False, default=False)
@@ -85,7 +87,7 @@ class Parking(models.Model):
 
     def __str__(self):
         return f"Parking ({self.category}, Location: {self.location}, Center: {self.center})"
-    
+
 
 class ParkingSpot(models.Model):
     is_reserved = models.BooleanField(null=False, default=False)
@@ -108,6 +110,7 @@ def update_empty_spots(sender, instance, **kwargs):
             else:
                 Parking.objects.filter(pk=instance.parking.pk).update(empty_spots=F('empty_spots') - 1)
 
+
 @receiver(post_save, sender=Parking)
 def create_parking_spots(sender, instance, created, **kwargs):
     if created:
@@ -116,8 +119,10 @@ def create_parking_spots(sender, instance, created, **kwargs):
         instance.empty_spots = instance.total_spots
         instance.save()
 
+
 pre_save.connect(update_empty_spots, sender=ParkingSpot)
 post_save.connect(create_parking_spots, sender=Parking)
+
 
 class Terminal(models.Model):
     center = models.ForeignKey(to=Coordinate, null=False, on_delete=models.PROTECT)
@@ -169,3 +174,11 @@ class Payment(models.Model):
 
     def __str__(self):
         return f"Payment for Parking {self.parking} with ID {self.payment_id} ({self.status}) for {self.credentials}"
+
+
+class Comment(models.Model):
+    parking = models.ForeignKey(to=Parking, null=False, on_delete=models.CASCADE)
+    text = models.TextField(null=False)
+
+    def __str__(self):
+        return f"Comment: {self.text}"

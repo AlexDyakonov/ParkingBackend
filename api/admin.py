@@ -1,5 +1,5 @@
 from django.contrib import admin
-from api.models import Parking, Coordinate, Category, Price, Location, Terminal, Parkomat, Payment, ParkingSpot
+from api.models import Parking, Coordinate, Category, Price, Location, Terminal, Parkomat, Payment, ParkingSpot, Comment
 
 
 @admin.register(Coordinate)
@@ -27,7 +27,9 @@ class PriceAdmin(admin.ModelAdmin):
 
 @admin.register(Parking)
 class ParkingAdmin(admin.ModelAdmin):
-    list_display = ('id', 'blocked', 'aggregating', 'total_spots', 'handicapped_spots', 'empty_spots', 'category', 'location', 'center')
+    list_display = (
+        'id', 'blocked', 'aggregating', 'total_spots', 'handicapped_spots', 'empty_spots', 'category', 'location',
+        'center')
     list_filter = ('blocked', 'aggregating', 'category', 'location')
 
 
@@ -47,11 +49,18 @@ class ParkomatAdmin(admin.ModelAdmin):
 class ParkingSpotAdmin(admin.ModelAdmin):
     list_display = ('id', 'is_reserved', 'is_empty')
 
+
 # @admin.register(Reservation)
 # class ReservationAdmin(admin.ModelAdmin):
 #     list_display = ('parking', 'created_at', 'duration', 'credentials')
 #     list_filter = ('parking', 'created_at')
 #     search_fields = ('parking__category__zone_purpose', 'created_at')
+
+
+@admin.register(Comment)
+class CommentAdmin(admin.ModelAdmin):
+    list_display = ('parking', 'text')
+    list_filter = ('parking', 'text')
 
 
 @admin.register(Payment)

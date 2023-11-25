@@ -3,6 +3,7 @@ from .models import Parkomat, Terminal
 from .models import Location
 from .models import Price
 from .models import Category
+from .models import Comment
 from rest_framework.serializers import ModelSerializer, Serializer
 from rest_framework.serializers import DecimalField
 
@@ -64,3 +65,9 @@ class ParkomatSerializer(ModelSerializer):
     class Meta:
         model = Parkomat
         fields = ('id', 'category', 'center')
+
+
+class CommentSerializer(ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = ('text',)

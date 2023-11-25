@@ -1,8 +1,8 @@
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .models import Parking, Parkomat, Terminal, Payment#, Reservation
-from .serializer import ParkingSerializer, TerminalSerializer, ParkomatSerializer
+from .models import Parking, Parkomat, Terminal, Payment, Comment
+from .serializer import ParkingSerializer, TerminalSerializer, ParkomatSerializer, CommentSerializer
 from rest_framework import status
 from .utils import load_parkings_from_ek, create_payment, get_payment_link, get_payment_status
 import datetime
@@ -72,6 +72,28 @@ def get_terminals(request):
 def get_parkomats(request):
     parkomats = Parkomat.objects.all()
     serializer = ParkomatSerializer(parkomats, many=True)
+    return Response(serializer.data)
+
+
+@api_view(['PUT'])
+def put_comment(request, parking_id):
+    parking = get_object_or_404(Parking, id=parking_id)
+    text = request.data.get('text')
+    if text is None:
+        return Response({"error": "no text"})
+    comment = Comment(
+        parking=parking,
+        text=text
+    )
+    comment.save()
+    return Response({"success": "Data uploaded successfully"})
+
+
+@api_view(['GET'])
+def get_comments(request, parking_id):
+    parking = get_object_or_404(Parking, id=parking_id)
+    comments = parking.comment_set.all()
+    serializer = CommentSerializer(comments, many=True)
     return Response(serializer.data)
 
 
