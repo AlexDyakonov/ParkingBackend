@@ -1,5 +1,5 @@
 from .models import Parking
-from .models import Coordinate
+from .models import Parkomat, Terminal
 from .models import Location
 from .models import Price
 from .models import Space
@@ -52,3 +52,21 @@ class ParkingSerializer(ModelSerializer):
     class Meta:
         model = Parking
         fields = ('id', 'blocked', 'aggregating', 'category', 'location', 'center', 'space', 'prices')
+
+
+class TerminalSerializer(ModelSerializer):
+    category = CategorySerializer()
+    center = CoordinateSerializer()
+
+    class Meta:
+        model = Terminal
+        fields = ('id', 'category', 'center')
+
+
+class ParkomatSerializer(ModelSerializer):
+    category = CategorySerializer()
+    center = CoordinateSerializer()
+
+    class Meta:
+        model = Parkomat
+        fields = ('id', 'category', 'center')
