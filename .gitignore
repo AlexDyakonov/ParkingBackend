@@ -88,7 +88,7 @@ htmlcov/
 nosetests.xml 
 coverage.xml 
 *.cover 
-.hypothesis/ 
+.hypothesis/
 
 # Jupyter Notebook 
 .ipynb_checkpoints 
@@ -115,7 +115,8 @@ venv.bak/
 /site 
 
 # mypy 
-.mypy_cache/ 
+.mypy_cache/
+my
 
 # Sublime Text # 
 *.tmlanguage.cache 

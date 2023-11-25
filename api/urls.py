@@ -10,6 +10,7 @@ app_name = "api"
 urlpatterns = [
     path('parkings', views.get_parkings, name="parkings"),
     path('parkings/put_ek', views.put_ek, name="parkings-put_ek"),
+    path('parkings/<int:parking_id>/', views.get_parking_by_id, name='get_parking_by_id'),
     path('terminals', views.get_terminals, name="terminals"),
     path('parkomats', views.get_parkomats, name="parkomats"),
 ]

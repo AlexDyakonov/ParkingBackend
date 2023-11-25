@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .models import Parking, Parkomat, Terminal
@@ -17,16 +17,6 @@ def get_parkings(request):
     return Response(serializer.data)
 
 
-@api_view(['PUT'])
-def put_ek(request):
-    json_data = request.data['parkings']
-    if not json_data:
-        return Response({'error': 'JSON data is required'}, status=status.HTTP_400_BAD_REQUEST)
-
-    load_parkings_from_ek(json_data)
-    return Response({'success': 'Data uploaded successfully'}, status=status.HTTP_201_CREATED)
-
-
 @api_view(['GET'])
 def get_terminals(request):
     terminals = Terminal.objects.all()
@@ -39,3 +29,25 @@ def get_parkomats(request):
     parkomats = Parkomat.objects.all()
     serializer = ParkomatSerializer(parkomats, many=True)
     return Response(serializer.data)
+
+
+@api_view(['GET'])
+def get_parking_by_id(request, parking_id):
+    # Get the parking object based on the provided ID or return a 404 response
+    parking = get_object_or_404(Parking, id=parking_id)
+
+    # Serialize the parking object
+    serializer = ParkingSerializer(parking)
+
+    # Return the serialized data as JSON
+    return Response(serializer.data)
+
+
+@api_view(['PUT'])
+def put_ek(request):
+    json_data = request.data['parkings']
+    if not json_data:
+        return Response({'error': 'JSON data is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+    load_parkings_from_ek(json_data)
+    return Response({'success': 'Data uploaded successfully'}, status=status.HTTP_201_CREATED)
