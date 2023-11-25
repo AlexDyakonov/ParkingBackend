@@ -19,8 +19,8 @@ class Location(models.Model):
 
 
 class LocationCoordinate(models.Model):
-    location_id = models.ForeignKey(to=Location, null=False, on_delete=models.PROTECT)
-    coordinate_id = models.ForeignKey(to=Coordinate, null=False, on_delete=models.PROTECT)
+    location = models.ForeignKey(to=Location, null=False, on_delete=models.PROTECT)
+    coordinate = models.ForeignKey(to=Coordinate, null=False, on_delete=models.PROTECT)
 
 
 class Category(models.Model):
@@ -54,8 +54,8 @@ class Price(models.Model):
 class Parking(models.Model):
     blocked = models.BooleanField(null=False, default=False)
     aggregating = models.BooleanField(null=False, default=False)
-    price_id = models.ForeignKey(to=Price, null=False, on_delete=models.PROTECT)
-    category_id = models.ForeignKey(to=Category, null=False, on_delete=models.PROTECT)
-    location_id = models.ForeignKey(to=Location, null=False, on_delete=models.PROTECT)
-    center_id = models.ForeignKey(to=Coordinate, null=False, on_delete=models.PROTECT)
-    space_id = models.ForeignKey(to=Space, null=False, on_delete=models.PROTECT)
+    price = models.ForeignKey(to=Price, null=False, on_delete=models.PROTECT)
+    category = models.ForeignKey(to=Category, null=False, on_delete=models.PROTECT)
+    location = models.ForeignKey(to=Location, null=False, on_delete=models.PROTECT)
+    center = models.ForeignKey(to=Coordinate, null=False, on_delete=models.PROTECT)
+    space = models.ForeignKey(to=Space, null=False, on_delete=models.PROTECT)
