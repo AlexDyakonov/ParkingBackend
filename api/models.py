@@ -8,30 +8,28 @@ class Coordinate(models.Model):
     class Meta:
         verbose_name_plural = "Координаты"
 
+    def __str__(self):
+        return f"[{self.latitude}, {self.longitude}]"
+
 
 class Location(models.Model):
     class LocationType(models.TextChoices):
         LINE_STRING = "line_string"
         POLYGON = "polygon"
 
-    location_type = models.CharField(
+    type = models.CharField(
         null=False,
         max_length=30,
         choices=LocationType.choices
     )
 
+    coordinates = models.ManyToManyField(to=Coordinate, related_name='locations')
+
     class Meta:
         verbose_name_plural = "Локации"
-    
 
-
-class LocationCoordinate(models.Model):
-    location = models.ForeignKey(to=Location, null=False, on_delete=models.CASCADE)
-    coordinate = models.ForeignKey(to=Coordinate, null=False, on_delete=models.CASCADE)
-
-    class Meta:
-        verbose_name_plural = "Локация-Координаты"
-        # db_table_comment = "Сопоставляет id локации с id координат. Необходимо для задания нескольких координат к одной локации."
+    def __str__(self):
+        return f"Location ({self.type})"
 
 
 class Category(models.Model):
@@ -47,12 +45,19 @@ class Category(models.Model):
     class Meta:
         verbose_name_plural = "Категория"
 
+    def __str__(self):
+        return f"Category ({self.get_zone_purpose_display()})"
+
 
 class Space(models.Model):
     handicapped = models.IntegerField(null=False)
     total = models.IntegerField(null=False)
+
     class Meta:
         verbose_name_plural = "Парковочные места"
+
+    def __str__(self):
+        return f"Space (Handicapped: {self.handicapped}, Total: {self.total})"
 
 
 class Price(models.Model):
@@ -69,6 +74,9 @@ class Price(models.Model):
     class Meta:
         verbose_name_plural = "Цены"
 
+    def __str__(self):
+        return f"Price ({self.vehicle_type}, Min: {self.min_price}, Max: {self.max_price})"
+
 
 class Parking(models.Model):
     blocked = models.BooleanField(null=False, default=False)
@@ -77,14 +85,10 @@ class Parking(models.Model):
     location = models.ForeignKey(to=Location, null=False, on_delete=models.PROTECT)
     center = models.ForeignKey(to=Coordinate, null=False, on_delete=models.PROTECT)
     space = models.ForeignKey(to=Space, null=False, on_delete=models.PROTECT)
+    prices = models.ManyToManyField(to=Price, related_name='parkings')
+
     class Meta:
         verbose_name_plural = "Парковки"
 
-
-class PriceParking(models.Model):
-    price = models.ForeignKey(to=Price, null=False, on_delete=models.CASCADE)
-    parking = models.ForeignKey(to=Parking, null=False, on_delete=models.CASCADE)
-
-    class Meta:
-        verbose_name_plural = "Цены парковок"
-        # db_table_comment = "Сопоставляет парковку с возможными на ней ценами."
+    def __str__(self):
+        return f"Parking ({self.category}, Location: {self.location}, Center: {self.center})"

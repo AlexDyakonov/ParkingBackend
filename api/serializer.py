@@ -4,40 +4,51 @@ from .models import Location
 from .models import Price
 from .models import Space
 from .models import Category
-from rest_framework.serializers import ModelSerializer
+from rest_framework.serializers import ModelSerializer, Serializer
+from rest_framework.serializers import DecimalField
 
 
-class CoordinateSerializer(ModelSerializer):
-    class Meta:
-        model = Coordinate
-        fields = '__all__'
+class CoordinateSerializer(Serializer):
+    longitude = DecimalField(max_digits=10, decimal_places=7)
+    latitude = DecimalField(max_digits=10, decimal_places=7)
+
+    def to_representation(self, instance):
+        return [instance.longitude, instance.latitude]
 
 
 class LocationSerializer(ModelSerializer):
+    coordinates = CoordinateSerializer(read_only=True, many=True)
+
     class Meta:
         model = Location
-        fields = '__all__'
+        fields = ('type', 'coordinates')
 
 
 class PriceSerializer(ModelSerializer):
     class Meta:
         model = Price
-        fields = '__all__'
+        fields = ('vehicle_type', 'min_price', 'max_price')
 
 
 class SpaceSerializer(ModelSerializer):
     class Meta:
         model = Space
-        fields = '__all__'
+        fields = ('handicapped', 'total')
 
 
 class CategorySerializer(ModelSerializer):
     class Meta:
         model = Category
-        fields = '__all__'
+        fields = ('zone_purpose',)
 
 
 class ParkingSerializer(ModelSerializer):
+    category = CategorySerializer()
+    location = LocationSerializer()
+    center = CoordinateSerializer()
+    space = SpaceSerializer()
+    prices = PriceSerializer(read_only=True, many=True)
+
     class Meta:
         model = Parking
-        fields = '__all__'
+        fields = ('id', 'blocked', 'aggregating', 'category', 'location', 'center', 'space', 'prices')
