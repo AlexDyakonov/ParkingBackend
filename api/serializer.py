@@ -29,7 +29,6 @@ class PriceSerializer(ModelSerializer):
         fields = ('vehicle_type', 'min_price', 'max_price')
 
 
-
 class CategorySerializer(ModelSerializer):
     class Meta:
         model = Category
@@ -44,7 +43,9 @@ class ParkingSerializer(ModelSerializer):
 
     class Meta:
         model = Parking
-        fields = ('id', 'blocked', 'aggregating', 'category', 'location', 'center', 'prices')
+        fields = (
+            'id', 'blocked', 'aggregating', 'category', 'location', 'center', 'prices', 'total_spots', 'empty_spots',
+            'handicapped_spots')
 
 
 class TerminalSerializer(ModelSerializer):

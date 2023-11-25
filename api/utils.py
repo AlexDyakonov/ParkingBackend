@@ -1,4 +1,3 @@
-import json
 from .models import Coordinate, Location, Category, Price, Parking
 
 
@@ -43,11 +42,18 @@ def load_parkings_from_ek(json_data):
             category, created = Category.objects.get_or_create(zone_purpose=category_data['zonePurpose'])
 
             # Создание парковочных мест
-            # spaces_data = parking_data['spaces']
-            # if spaces_data.get('handicapped') is not None:
-            #     space = Space.objects.create(handicapped=spaces_data['handicapped'], total=spaces_data['total'])
+            spaces_data = parking_data['spaces']
+
+            total_spots = 0
+            empty_spots = 0
+            handicapped_spots = 0
+            if spaces_data.get('handicapped') is not None:
+                total_spots = spaces_data['total']
+                empty_spots = spaces_data['total']
+                handicapped_spots = spaces_data['handicapped']
 
             # Создание цен
+            prices = None
             if parking_data.get('zone') is not None:
                 zone_data = parking_data['zone']
 
@@ -63,10 +69,14 @@ def load_parkings_from_ek(json_data):
                 category=category,
                 location=location,
                 center=center,
+                total_spots=total_spots,
+                empty_spots=empty_spots,
+                handicapped_spots=handicapped_spots
                 # space=space
             )
 
-            parking.prices.set(prices)
+            if prices is not None:
+                parking.prices.set(prices)
 
             parking.save()
         except Exception:
