@@ -8,5 +8,5 @@ from . import views
 app_name = "api"
 
 urlpatterns = [
-    path('', views.get_mocks, name="mocks"),
+    path('parkings', views.get_parkings, name="parkings"),
 ]

@@ -1,8 +1,12 @@
 from django.contrib import admin
-from api.models import Mock
+from api.models import Parking, Coordinate, Category, Price, Space, Location, LocationCoordinate
 
 # Register your models here.
-class MockAdmin(admin.ModelAdmin):
-    list_display = ['pk', 'text']
 
-admin.site.register(Mock, MockAdmin)
+admin.site.register(Parking)
+admin.site.register(Coordinate)
+admin.site.register(Category)
+admin.site.register(Price)
+admin.site.register(Space)
+admin.site.register(Location)
+admin.site.register(LocationCoordinate)

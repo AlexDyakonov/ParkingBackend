@@ -14,9 +14,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG_MODE', True) == "True"
+DEBUG = os.getenv('DEBUG_MODE', "True") == "True"
 
-ALLOWED_HOSTS = ['*',]
+ALLOWED_HOSTS = [os.getenv('ALLOWED_HOST'), ]
 
 # Application definition
 
@@ -148,7 +148,7 @@ CORS_ALLOWED_ORIGINS = [
 # Jazzmin
 
 JAZZMIN_SETTINGS = {
-    'site_header':"Оптимизация парковочных мест",
+    'site_header': "Оптимизация парковочных мест",
     'site_brand': "Шампиньоны",
     'copyright': "@Шампиньоны",
 }
