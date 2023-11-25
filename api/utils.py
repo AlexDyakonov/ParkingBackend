@@ -2,6 +2,21 @@ import json
 from .models import Coordinate, Location, Category, Space, Price, Parking
 
 
+def create_payment(secret_key, return_link):
+    # должно возвращать id оплаты от юмани
+    return "todo-youmoney-payment-link"
+
+
+def get_payment_link(payment_id):
+    # должно возвращать ссылку на оплату
+    return "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+
+
+def get_payment_status(payment_id):
+    # возвращает статус который отдает юмани
+    return "succeed"
+
+
 # Написал ChatGPT
 def load_parkings_from_ek(json_data):
     # Проход по каждой парковке в JSON

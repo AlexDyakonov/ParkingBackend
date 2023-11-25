@@ -109,3 +109,38 @@ class Parkomat(models.Model):
 
     class Meta:
         verbose_name_plural = "Паркоматы"
+
+
+class Reservation(models.Model):
+    parking = models.ForeignKey(to=Parking, null=False, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True, null=False)
+    duration = models.DurationField(null=False)
+    credentials = models.CharField(max_length=50, null=False)
+
+    class Meta:
+        verbose_name_plural = "Брони"
+
+    def __str__(self):
+        return f"Reservation for Parking {self.parking} created at {self.created_at} for {self.credentials}"
+
+
+class Payment(models.Model):
+    class Status(models.TextChoices):
+        PENDING = "pending"
+        SUCCEED = "succeed"
+
+    status = models.CharField(
+        max_length=30,
+        choices=Status.choices,
+        default=Status.PENDING)
+    payment_id = models.CharField(max_length=50, db_index=True)
+    parking = models.ForeignKey(to=Parking, null=False, on_delete=models.CASCADE)
+    duration = models.DurationField(null=False)
+    secret_key = models.CharField(max_length=50, null=False)
+    credentials = models.CharField(max_length=50, null=False)
+
+    class Meta:
+        verbose_name_plural = "Оплаты"
+
+    def __str__(self):
+        return f"Payment for Parking {self.parking} with ID {self.payment_id} ({self.status}) for {self.credentials}"
