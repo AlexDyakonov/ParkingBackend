@@ -1,5 +1,5 @@
 import json
-from .models import Coordinate, Location, Category, Space, Price, Parking
+from .models import Coordinate, Location, Category, Price, Parking
 
 
 def create_payment(secret_key, return_link):
@@ -43,9 +43,9 @@ def load_parkings_from_ek(json_data):
             category, created = Category.objects.get_or_create(zone_purpose=category_data['zonePurpose'])
 
             # Создание парковочных мест
-            spaces_data = parking_data['spaces']
-            if spaces_data.get('handicapped') is not None:
-                space = Space.objects.create(handicapped=spaces_data['handicapped'], total=spaces_data['total'])
+            # spaces_data = parking_data['spaces']
+            # if spaces_data.get('handicapped') is not None:
+            #     space = Space.objects.create(handicapped=spaces_data['handicapped'], total=spaces_data['total'])
 
             # Создание цен
             if parking_data.get('zone') is not None:
@@ -63,7 +63,7 @@ def load_parkings_from_ek(json_data):
                 category=category,
                 location=location,
                 center=center,
-                space=space
+                # space=space
             )
 
             parking.prices.set(prices)

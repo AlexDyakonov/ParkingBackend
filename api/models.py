@@ -1,5 +1,7 @@
 from django.db import models
-
+from django.db.models.signals import post_save, pre_save
+from django.dispatch import receiver
+from django.db.models import F
 
 class Coordinate(models.Model):
     longitude = models.DecimalField(max_digits=10, decimal_places=7)
@@ -50,17 +52,6 @@ class Category(models.Model):
         return f"Category ({self.get_zone_purpose_display()})"
 
 
-class Space(models.Model):
-    handicapped = models.IntegerField(null=False)
-    total = models.IntegerField(null=False)
-
-    class Meta:
-        verbose_name_plural = "Парковочные места"
-
-    def __str__(self):
-        return f"Space (Handicapped: {self.handicapped}, Total: {self.total})"
-
-
 class Price(models.Model):
     class VehicleType(models.TextChoices):
         CAR = "car"
@@ -78,14 +69,15 @@ class Price(models.Model):
     def __str__(self):
         return f"Price ({self.vehicle_type}, Min: {self.min_price}, Max: {self.max_price})"
 
-
 class Parking(models.Model):
     blocked = models.BooleanField(null=False, default=False)
     aggregating = models.BooleanField(null=False, default=False)
+    total_spots = models.IntegerField(null=True)
+    handicapped_spots = models.IntegerField(null=True)
+    empty_spots = models.IntegerField(null=True)
     category = models.ForeignKey(to=Category, null=False, on_delete=models.PROTECT)
     location = models.ForeignKey(to=Location, null=False, on_delete=models.PROTECT)
     center = models.ForeignKey(to=Coordinate, null=False, on_delete=models.PROTECT)
-    space = models.ForeignKey(to=Space, null=False, on_delete=models.PROTECT)
     prices = models.ManyToManyField(to=Price, related_name='parkings')
 
     class Meta:
@@ -93,7 +85,39 @@ class Parking(models.Model):
 
     def __str__(self):
         return f"Parking ({self.category}, Location: {self.location}, Center: {self.center})"
+    
 
+class ParkingSpot(models.Model):
+    is_reserved = models.BooleanField(null=False, default=False)
+    is_empty = models.BooleanField(null=False, default=True)
+    reservation_start_time = models.DateTimeField(auto_now_add=False, null=True)
+    reservation_duration = models.DurationField(null=True)
+    parking = models.ForeignKey(to=Parking, null=True, on_delete=models.CASCADE)
+
+
+@receiver(pre_save, sender=ParkingSpot)
+def update_empty_spots(sender, instance, **kwargs):
+    if instance.pk:
+        old_parking_spot = ParkingSpot.objects.get(pk=instance.pk)
+        old_is_empty = old_parking_spot.is_empty
+        new_is_empty = instance.is_empty
+
+        if old_is_empty != new_is_empty:
+            if new_is_empty:
+                Parking.objects.filter(pk=instance.parking.pk).update(empty_spots=F('empty_spots') + 1)
+            else:
+                Parking.objects.filter(pk=instance.parking.pk).update(empty_spots=F('empty_spots') - 1)
+
+@receiver(post_save, sender=Parking)
+def create_parking_spots(sender, instance, created, **kwargs):
+    if created:
+        for _ in range(instance.total_spots):
+            ParkingSpot.objects.create(parking=instance, is_empty=True)
+        instance.empty_spots = instance.total_spots
+        instance.save()
+
+pre_save.connect(update_empty_spots, sender=ParkingSpot)
+post_save.connect(create_parking_spots, sender=Parking)
 
 class Terminal(models.Model):
     center = models.ForeignKey(to=Coordinate, null=False, on_delete=models.PROTECT)
@@ -111,17 +135,18 @@ class Parkomat(models.Model):
         verbose_name_plural = "Паркоматы"
 
 
-class Reservation(models.Model):
-    parking = models.ForeignKey(to=Parking, null=False, on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add=True, null=False)
-    duration = models.DurationField(null=False)
-    credentials = models.CharField(max_length=50, null=False)
+# class Reservation(models.Model):
+#     parking = models.ForeignKey(to=Parking, null=False, on_delete=models.CASCADE)
+#     is_reserved = models.BooleanField(null=False, default=False)
+#     started_at = models.DateTimeField(auto_now_add=True, null=False)
+#     duration = models.DurationField(null=False)
+#     credentials = models.CharField(max_length=50, null=False)
 
-    class Meta:
-        verbose_name_plural = "Брони"
+#     class Meta:
+#         verbose_name_plural = "Брони"
 
-    def __str__(self):
-        return f"Reservation for Parking {self.parking} created at {self.created_at} for {self.credentials}"
+#     def __str__(self):
+#         return f"Reservation for Parking {self.parking} created at {self.created_at} for {self.credentials}"
 
 
 class Payment(models.Model):

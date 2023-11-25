@@ -2,7 +2,6 @@ from .models import Parking
 from .models import Parkomat, Terminal
 from .models import Location
 from .models import Price
-from .models import Space
 from .models import Category
 from rest_framework.serializers import ModelSerializer, Serializer
 from rest_framework.serializers import DecimalField
@@ -30,11 +29,6 @@ class PriceSerializer(ModelSerializer):
         fields = ('vehicle_type', 'min_price', 'max_price')
 
 
-class SpaceSerializer(ModelSerializer):
-    class Meta:
-        model = Space
-        fields = ('handicapped', 'total')
-
 
 class CategorySerializer(ModelSerializer):
     class Meta:
@@ -46,12 +40,11 @@ class ParkingSerializer(ModelSerializer):
     category = CategorySerializer()
     location = LocationSerializer()
     center = CoordinateSerializer()
-    space = SpaceSerializer()
     prices = PriceSerializer(read_only=True, many=True)
 
     class Meta:
         model = Parking
-        fields = ('id', 'blocked', 'aggregating', 'category', 'location', 'center', 'space', 'prices')
+        fields = ('id', 'blocked', 'aggregating', 'category', 'location', 'center', 'prices')
 
 
 class TerminalSerializer(ModelSerializer):

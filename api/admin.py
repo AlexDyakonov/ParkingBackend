@@ -1,5 +1,5 @@
 from django.contrib import admin
-from api.models import Parking, Coordinate, Category, Price, Space, Location, Terminal, Parkomat, Payment, Reservation
+from api.models import Parking, Coordinate, Category, Price, Location, Terminal, Parkomat, Payment, ParkingSpot
 
 
 @admin.register(Coordinate)
@@ -19,11 +19,6 @@ class CategoryAdmin(admin.ModelAdmin):
     list_filter = ('zone_purpose',)
 
 
-@admin.register(Space)
-class SpaceAdmin(admin.ModelAdmin):
-    list_display = ('handicapped', 'total')
-
-
 @admin.register(Price)
 class PriceAdmin(admin.ModelAdmin):
     list_display = ('vehicle_type', 'min_price', 'max_price')
@@ -32,7 +27,7 @@ class PriceAdmin(admin.ModelAdmin):
 
 @admin.register(Parking)
 class ParkingAdmin(admin.ModelAdmin):
-    list_display = ('id', 'blocked', 'aggregating', 'category', 'location', 'center', 'space')
+    list_display = ('id', 'blocked', 'aggregating', 'total_spots', 'handicapped_spots', 'empty_spots', 'category', 'location', 'center')
     list_filter = ('blocked', 'aggregating', 'category', 'location')
 
 
@@ -48,11 +43,15 @@ class ParkomatAdmin(admin.ModelAdmin):
     list_filter = ('center', 'category')
 
 
-@admin.register(Reservation)
-class ReservationAdmin(admin.ModelAdmin):
-    list_display = ('parking', 'created_at', 'duration', 'credentials')
-    list_filter = ('parking', 'created_at')
-    search_fields = ('parking__category__zone_purpose', 'created_at')
+@admin.register(ParkingSpot)
+class ParkingSpotAdmin(admin.ModelAdmin):
+    list_display = ('id', 'is_reserved', 'is_empty')
+
+# @admin.register(Reservation)
+# class ReservationAdmin(admin.ModelAdmin):
+#     list_display = ('parking', 'created_at', 'duration', 'credentials')
+#     list_filter = ('parking', 'created_at')
+#     search_fields = ('parking__category__zone_purpose', 'created_at')
 
 
 @admin.register(Payment)

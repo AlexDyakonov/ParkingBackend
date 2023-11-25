@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .models import Parking, Parkomat, Terminal, Reservation, Payment
+from .models import Parking, Parkomat, Terminal, Payment#, Reservation
 from .serializer import ParkingSerializer, TerminalSerializer, ParkomatSerializer
 from rest_framework import status
 from .utils import load_parkings_from_ek, create_payment, get_payment_link, get_payment_status
@@ -42,13 +42,13 @@ def payment_status(request):
     pay_status = get_payment_status(payment_id)
     if pay_status == Payment.Status.SUCCEED:
         payment = get_object_or_404(Payment, payment_id=payment_id)
-        reservation = Reservation(
-            duration=payment.duration,
-            parking=payment.parking,
-            credentials=payment.credentials
-        )
+        # reservation = Reservation(
+        #     duration=payment.duration,
+        #     parking=payment.parking,
+        #     credentials=payment.credentials
+        # )
         # payment.delete()
-        reservation.save()
+        # reservation.save()
     return Response({
         "status": pay_status
     })
