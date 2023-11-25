@@ -17,6 +17,7 @@ def parking_reserve(request, parking_id):
     if credentials is None:
         return Response({"error": "no credentials"})
     payment = Payment(
+        # надо время опцией сделать
         duration=datetime.timedelta(hours=1),
         parking=parking,
         credentials=credentials
@@ -28,7 +29,7 @@ def parking_reserve(request, parking_id):
     payment.save()
 
     return Response({
-        "payment_id": payment.id,
+        "payment_id": payment.payment_id,
         "payment_link": get_payment_link(payment.payment_id)
     })
 
