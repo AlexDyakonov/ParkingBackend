@@ -9,6 +9,7 @@ app_name = "api"
 
 urlpatterns = [
     path('parkings', views.get_parkings, name="parkings"),
+    path('parkings/put_ek', views.put_ek, name="parkings-put_ek"),
     path('terminals', views.get_terminals, name="terminals"),
     path('parkomats', views.get_parkomats, name="parkomats"),
 ]
