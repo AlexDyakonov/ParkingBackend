@@ -1,5 +1,5 @@
 from django.contrib import admin
-from api.models import Parking, Coordinate, Category, Price, Space, Location, LocationCoordinate, PriceParking
+from api.models import Parking, Coordinate, Category, Price, Space, Location, LocationCoordinate, PriceParking, Terminal, Parkomat
 
 @admin.register(Coordinate)
 class CoordinateAdmin(admin.ModelAdmin):
@@ -38,3 +38,13 @@ class ParkingAdmin(admin.ModelAdmin):
 class PriceParkingAdmin(admin.ModelAdmin):
     list_display = ('price', 'parking')
     list_filter = ('price', 'parking')
+
+@admin.register(Terminal)
+class TerminalAdmin(admin.ModelAdmin):
+    list_display = ('id', 'center', 'category')
+    list_filter = ('center', 'category')
+
+@admin.register(Parkomat)
+class ParkomatAdmin(admin.ModelAdmin):
+    list_display = ('id', 'center', 'category')
+    list_filter = ('center', 'category')

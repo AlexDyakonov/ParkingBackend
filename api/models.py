@@ -36,6 +36,7 @@ class LocationCoordinate(models.Model):
 
 class Category(models.Model):
     class CategoryType(models.TextChoices):
+        POINT = "point"
         LINE = "line"
         POLYGON = "polygon"
 
@@ -88,3 +89,15 @@ class PriceParking(models.Model):
     class Meta:
         verbose_name_plural = "Цены парковок"
         # db_table_comment = "Сопоставляет парковку с возможными на ней ценами."
+
+class Terminal(models.Model):
+    center = models.ForeignKey(to=Coordinate, null=False, on_delete=models.PROTECT)
+    category = models.ForeignKey(to=Category, null=False, on_delete=models.PROTECT, default=Category.CategoryType.POINT)
+    class Meta:
+        verbose_name_plural = "Терминалы"
+
+class Parkomat(models.Model):
+    center = models.ForeignKey(to=Coordinate, null=False, on_delete=models.PROTECT)
+    category = models.ForeignKey(to=Category, null=False, on_delete=models.PROTECT, default=Category.CategoryType.POINT)
+    class Meta:
+        verbose_name_plural = "Паркоматы"
