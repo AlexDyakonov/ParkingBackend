@@ -34,6 +34,7 @@ class Location(models.Model):
 
 class Category(models.Model):
     class CategoryType(models.TextChoices):
+        POINT = "point"
         LINE = "line"
         POLYGON = "polygon"
 
@@ -92,3 +93,15 @@ class Parking(models.Model):
 
     def __str__(self):
         return f"Parking ({self.category}, Location: {self.location}, Center: {self.center})"
+
+class Terminal(models.Model):
+    center = models.ForeignKey(to=Coordinate, null=False, on_delete=models.PROTECT)
+    category = models.ForeignKey(to=Category, null=False, on_delete=models.PROTECT, default=Category.CategoryType.POINT)
+    class Meta:
+        verbose_name_plural = "Терминалы"
+
+class Parkomat(models.Model):
+    center = models.ForeignKey(to=Coordinate, null=False, on_delete=models.PROTECT)
+    category = models.ForeignKey(to=Category, null=False, on_delete=models.PROTECT, default=Category.CategoryType.POINT)
+    class Meta:
+        verbose_name_plural = "Паркоматы"
