@@ -1,25 +1,51 @@
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .models import Parking, Parkomat, Terminal, Comment
+from .models import Parking, Parkomat, Terminal, Comment, Booking, Transaction, ParkingSpot
 from .serializer import ParkingSerializer, TerminalSerializer, ParkomatSerializer, CommentSerializer
 from rest_framework import status
-from .utils import load_parkings_from_ek, create_payment, get_payment_link, get_payment_status
-import datetime
-
-
+from .utils import load_parkings_from_ek, create_payment, get_payment_link, get_payment_status, get_payment_id
+from datetime import timedelta
 # Create your views here.
 
+
+# Происходит бронирование места на парковке и возвращает payment_link от юкассы
 @api_view(['POST'])
 def parking_reserve(request, parking_id):
     parking = get_object_or_404(Parking, id=parking_id)
     credentials = request.data.get('credentials')
+    int_duration = request.data.get('duration') or 1
+    duration = timedelta(hours=int_duration)
+    
     if credentials is None:
         return Response({"error": "no credentials"})
-    # надо случайный
+    
+    if parking.empty_spots == 0:
+        return Response({"error": "no empty spots"})
+
+    if parking.prices is None:
+        return Response({"error": "no price"})
+    
+    empty_parking_spot = ParkingSpot.objects.filter(parking=parking, is_empty=True, is_reserved=False).first()
+    empty_parking_spot.is_reserved = True
+    empty_parking_spot.is_empty = False
+    empty_parking_spot.save
+
+
+
+    booking = Booking(
+        parking_spot = empty_parking_spot,
+        credentials = credentials,
+        duration=duration,
+        total_price=int_duration*parking.prices.first().max_price,
+    )
+    booking.save()
+
+    payment = create_payment(booking)
+
     return Response({
-        "payment_id": "todo",
-        "payment_link": get_payment_link("todo")
+        "payment_link": get_payment_link(payment),
+        "payment_id": get_payment_id(payment),
     })
 
 

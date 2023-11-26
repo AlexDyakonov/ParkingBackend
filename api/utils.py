@@ -1,17 +1,40 @@
-from .models import Coordinate, Location, Category, Price, Parking
+from .models import Coordinate, Location, Category, Price, Parking, Transaction
+from yookassa import Payment
+import uuid
 
+def create_payment(booking):
+    value = booking.total_price/100
+    payment = Payment.create({
+        "amount": {
+            "value": value,
+            "currency": "RUB"
+        },
+            "confirmation": {
+            "type": "redirect",
+            "return_url": f"https://google.com"
+        },
+            "capture": True,
+            "description": booking.credentials
+    }, uuid.uuid4())
+    
+    transaction = Transaction(
+        booking=booking,
+        payment_id=payment.id
+    )
+    transaction.save()
+    
+    return payment
 
-def create_payment(secret_key, return_link):
-    # должно возвращать id оплаты от юмани
-    return "todo-youmoney-payment-link"
+def get_payment_link(payment):    
+    confirmation_url = payment.confirmation.confirmation_url
+    return confirmation_url
 
-
-def get_payment_link(payment_id):
-    # должно возвращать ссылку на оплату
-    return "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+def get_payment_id(payment):
+    return payment.id
 
 
 def get_payment_status(payment_id):
+
     # возвращает статус который отдает юмани
     return "succeed"
 

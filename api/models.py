@@ -3,7 +3,7 @@ from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 from django.db.models import F
 import uuid
-
+from datetime import timedelta
 
 class Coordinate(models.Model):
     longitude = models.DecimalField(max_digits=10, decimal_places=7)
@@ -145,9 +145,12 @@ class Booking(models.Model):
     parking_spot = models.ForeignKey(to=ParkingSpot, null=False, on_delete=models.CASCADE)
     credentials = models.CharField(max_length=50, null=False)
     booking_start_time = models.DateTimeField(auto_now_add=True, null=False) # booking - время, когда машина стоит на парковке
-    booking_end_time = models.DateTimeField(null=False)
-    total_price = models.IntegerField(null=True)
+    duration = models.DurationField(null=False, default=timedelta(hours=1))
+    total_price = models.IntegerField(null=True) # в копейках
 
+    def booking_end_time(self):
+        return self.booking_start_time + self.duration
+    
     class Meta:
         verbose_name_plural = "Брони"
 
@@ -159,7 +162,6 @@ class Transaction(models.Model):
     booking = models.ForeignKey(to=Booking, on_delete=models.CASCADE)
     payment_id = models.CharField(max_length=50, db_index=True) # API ID
     secret_key = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
-    credentials = models.CharField(max_length=50, null=False)
 
     TRANSACTION_STATUS_CHOICES = [
         ('pending', 'Ожидание оплаты'),

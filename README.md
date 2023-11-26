@@ -12,6 +12,8 @@
     POSTGRES_PORT=db_port
     NGINX_EXTERNAL_PORT=80
     NGINX_EXTERNAL_SSL_PORT=443
+    YOOKASSA_ACCOUNT_ID=
+    YOOKASSA_SECRET_KEY=
 
 Для запуска в докере необходимо создать .env.docker
 
