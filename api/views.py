@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from .models import Parking, Parkomat, Terminal, Comment, Booking, ParkingSpot
 from .serializer import ParkingSerializer, TerminalSerializer, ParkomatSerializer, CommentSerializer
 from rest_framework import status
-from .utils import load_parkings_from_ek, create_payment, get_payment_link, get_payment_status, get_payment_id, payment_status_handler
+from .utils import load_parkings_from_ek, create_payment, get_payment_link, get_payment_status, get_payment_id, payment_status_handler, update_parking_spots
 from datetime import timedelta
 
 
@@ -27,6 +27,8 @@ def parking_reserve(request, parking_id):
 
     if parking.prices is None:
         return Response({"error": "no price"})
+
+    update_parking_spots(parking)
 
     empty_parking_spot = ParkingSpot.objects.filter(parking=parking, is_empty=True, is_reserved=False).first()
     empty_parking_spot.is_reserved = True
