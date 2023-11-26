@@ -6,6 +6,8 @@ from .serializer import ParkingSerializer, TerminalSerializer, ParkomatSerialize
 from rest_framework import status
 from .utils import load_parkings_from_ek, create_payment, get_payment_link, get_payment_status, get_payment_id
 from datetime import timedelta
+
+
 # Create your views here.
 
 
@@ -16,28 +18,26 @@ def parking_reserve(request, parking_id):
     credentials = request.data.get('credentials')
     int_duration = request.data.get('duration') or 1
     duration = timedelta(hours=int_duration)
-    
+
     if credentials is None:
         return Response({"error": "no credentials"})
-    
+
     if parking.empty_spots == 0:
         return Response({"error": "no empty spots"})
 
     if parking.prices is None:
         return Response({"error": "no price"})
-    
+
     empty_parking_spot = ParkingSpot.objects.filter(parking=parking, is_empty=True, is_reserved=False).first()
     empty_parking_spot.is_reserved = True
     empty_parking_spot.is_empty = False
-    empty_parking_spot.save
-
-
+    empty_parking_spot.save()
 
     booking = Booking(
-        parking_spot = empty_parking_spot,
-        credentials = credentials,
+        parking_spot=empty_parking_spot,
+        credentials=credentials,
         duration=duration,
-        total_price=int_duration*parking.prices.first().max_price,
+        total_price=int_duration * parking.prices.first().max_price,
     )
     booking.save()
 
@@ -100,7 +100,12 @@ def get_comments(request, parking_id):
     parking = get_object_or_404(Parking, id=parking_id)
     comments = parking.comment_set.all()
     serializer = CommentSerializer(comments, many=True)
-    return Response(serializer.data)
+    return Response([
+        {
+            "text": comment.text,
+            "fio": "Иванов Иван Иванович",
+            "rating": 5
+        } for comment in comments])
 
 
 @api_view(['GET'])
