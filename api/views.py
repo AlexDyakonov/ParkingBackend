@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from .models import Parking, Parkomat, Terminal, Comment, Booking, ParkingSpot
 from .serializer import ParkingSerializer, TerminalSerializer, ParkomatSerializer, CommentSerializer
 from rest_framework import status
-from .utils import load_parkings_from_ek, create_payment, get_payment_link, get_payment_status, get_payment_id
+from .utils import load_parkings_from_ek, create_payment, get_payment_link, get_payment_status, get_payment_id, payment_status_handler
 from datetime import timedelta
 
 
@@ -55,6 +55,9 @@ def payment_status(request):
     if payment_id is None:
         return Response({"error": "no payment_id"})
     pay_status = get_payment_status(payment_id)
+
+    payment_status_handler(payment_id, pay_status)
+
     return Response({
         "status": pay_status
     })
@@ -131,3 +134,27 @@ def put_ek(request):
 
     load_parkings_from_ek(json_data)
     return Response({'success': 'Data uploaded successfully'}, status=status.HTTP_201_CREATED)
+
+# 
+# @csrf_exempt
+# @require_POST
+# def yookassa_webhook(request):
+#     try:
+#         data = request.json()
+#         payment_id = data.get("object", {}).get("id")
+#         payment_status = data.get("object", {}).get("status")
+
+#         if payment_status == 'pending':
+            
+#         elif payment_status == 'waiting_for_capture':
+            
+#         elif payment_status == 'succeeded':
+            
+#         elif payment_status == 'canceled':
+            
+#         else:
+#             print('Unexpected')
+
+#         return JsonResponse({"status": "success"})
+#     except Exception as e:
+#         return JsonResponse({"status": "error", "message": str(e)})

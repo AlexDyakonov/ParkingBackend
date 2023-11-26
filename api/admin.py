@@ -1,5 +1,5 @@
 from django.contrib import admin
-from api.models import Parking, Coordinate, Category, Price, Location, Terminal, Parkomat, ParkingSpot, Comment
+from api.models import Parking, Coordinate, Category, Price, Location, Terminal, Parkomat, ParkingSpot, Comment, Booking, Transaction, Comment
 
 
 @admin.register(Coordinate)
@@ -50,14 +50,26 @@ class ParkingSpotAdmin(admin.ModelAdmin):
     list_display = ('id', 'is_reserved', 'is_empty')
 
 
-# @admin.register(Reservation)
-# class ReservationAdmin(admin.ModelAdmin):
-#     list_display = ('parking', 'created_at', 'duration', 'credentials')
-#     list_filter = ('parking', 'created_at')
-#     search_fields = ('parking__category__zone_purpose', 'created_at')
+@admin.register(Booking)
+class BookingAdmin(admin.ModelAdmin):
+    list_display = ('id', 'parking_spot', 'credentials', 'booking_start_time', 'duration', 'booking_end_time', 'total_price')
+    list_filter = ('parking_spot', 'booking_start_time')
+    search_fields = ('credentials',)
+    date_hierarchy = 'booking_start_time'
+    ordering = ('-booking_start_time',)
+
+
+@admin.register(Transaction)
+class TransactionAdmin(admin.ModelAdmin):
+    list_display = ('id', 'booking', 'payment_id', 'transaction_status')
+    list_filter = ('booking', 'transaction_status')
+    search_fields = ('payment_id',)
+    ordering = ('-id',)
 
 
 @admin.register(Comment)
 class CommentAdmin(admin.ModelAdmin):
-    list_display = ('parking', 'text')
-    list_filter = ('parking', 'text')
+    list_display = ('id', 'parking', 'fio', 'rating')
+    list_filter = ('parking', 'rating')
+    search_fields = ('fio',)
+    ordering = ('-id',)
