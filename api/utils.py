@@ -11,17 +11,18 @@ def create_payment(booking):
         },
             "confirmation": {
             "type": "redirect",
-            "return_url": f"https://google.com"
+            "return_url": "https://youtu.be/dQw4w9WgXcQ"
         },
             "capture": True,
             "description": booking.credentials
     }, uuid.uuid4())
     
-    transaction = Transaction(
+    transaction = Transaction.objects.get_or_create(
         booking=booking,
-        payment_id=payment.id
+        payment_id=payment.id,
+        transaction_status='pending',
     )
-    transaction.save()
+    transaction[0].save()
     
     return payment
 
@@ -34,9 +35,8 @@ def get_payment_id(payment):
 
 
 def get_payment_status(payment_id):
-
-    # возвращает статус который отдает юмани
-    return "succeed"
+    payment = Payment.find_one(payment_id)
+    return payment.status
 
 
 # Написал ChatGPT
@@ -105,3 +105,19 @@ def load_parkings_from_ek(json_data):
         except Exception:
             print("ad")
     # Готово! Данные загружены в базу данных Django.
+
+def payment_status_handler(payment_id, payment_status):
+    transaction = Transaction.objects.get(payment_id=payment_id)
+
+    if payment_status == 'pending':
+        transaction.transaction_status = 'pending'
+    elif payment_status == 'waiting_for_capture':
+        transaction.transaction_status = 'pending'
+    elif payment_status == 'succeeded':
+        transaction.transaction_status = 'paid'
+    elif payment_status == 'canceled':
+        transaction.transaction_status = 'failed'
+    else:
+        print('Unexpected')
+        
+    transaction.save()

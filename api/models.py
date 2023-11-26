@@ -157,7 +157,7 @@ class Booking(models.Model):
         verbose_name_plural = "Брони"
 
     def __str__(self):
-        return f"Booking for Parking {self.parking} created at {self.created_at} for {self.credentials}"
+        return f"Booking for Parking {self.parking_spot} started at {self.booking_start_time} for {self.credentials}"
 
 
 class Transaction(models.Model):
@@ -182,7 +182,7 @@ class Transaction(models.Model):
         verbose_name_plural = "Оплаты"
 
     def __str__(self):
-        return f"Transaction for Parking {self.parking} with ID {self.payment_id} ({self.status}) for {self.credentials}"
+        return f"Transaction for Parking {self.booking} with ID {self.payment_id} ({self.transaction_status})"
 
 
 class Comment(models.Model):
