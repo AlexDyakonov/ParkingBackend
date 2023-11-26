@@ -6,7 +6,10 @@
 
 - [development](#запуск-development)
 - [production](#запуск-production)
+---
+[API DOCS](API_docs.md)
 
+---
 ## Запуск development
 
 Необходимо создать в корне .env файл, который состоит из:
