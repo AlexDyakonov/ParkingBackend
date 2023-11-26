@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .models import Parking, Parkomat, Terminal, Comment, Booking, Transaction, ParkingSpot
+from .models import Parking, Parkomat, Terminal, Comment, Booking, ParkingSpot
 from .serializer import ParkingSerializer, TerminalSerializer, ParkomatSerializer, CommentSerializer
 from rest_framework import status
 from .utils import load_parkings_from_ek, create_payment, get_payment_link, get_payment_status, get_payment_id
@@ -87,9 +87,17 @@ def put_comment(request, parking_id):
     text = request.data.get('text')
     if text is None:
         return Response({"error": "no text"})
+    fio = request.data.get('fio')
+    if fio is None:
+        return Response({"error": "no fio"})
+    rating = request.data.get('rating')
+    if rating is None:
+        return Response({"error": "no rating"})
     comment = Comment(
         parking=parking,
-        text=text
+        text=text,
+        rating=rating,
+        fio=fio
     )
     comment.save()
     return Response({"success": "Data uploaded successfully"})
@@ -100,12 +108,7 @@ def get_comments(request, parking_id):
     parking = get_object_or_404(Parking, id=parking_id)
     comments = parking.comment_set.all()
     serializer = CommentSerializer(comments, many=True)
-    return Response([
-        {
-            "text": comment.text,
-            "fio": "Иванов Иван Иванович",
-            "rating": 5
-        } for comment in comments])
+    return Response(serializer.data)
 
 
 @api_view(['GET'])

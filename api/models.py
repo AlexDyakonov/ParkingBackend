@@ -5,6 +5,7 @@ from django.db.models import F
 import uuid
 from datetime import timedelta
 
+
 class Coordinate(models.Model):
     longitude = models.DecimalField(max_digits=10, decimal_places=7)
     latitude = models.DecimalField(max_digits=10, decimal_places=7)
@@ -144,13 +145,14 @@ class Parkomat(models.Model):
 class Booking(models.Model):
     parking_spot = models.ForeignKey(to=ParkingSpot, null=False, on_delete=models.CASCADE)
     credentials = models.CharField(max_length=50, null=False)
-    booking_start_time = models.DateTimeField(auto_now_add=True, null=False) # booking - время, когда машина стоит на парковке
+    booking_start_time = models.DateTimeField(auto_now_add=True,
+                                              null=False)  # booking - время, когда машина стоит на парковке
     duration = models.DurationField(null=False, default=timedelta(hours=1))
-    total_price = models.IntegerField(null=True) # в копейках
+    total_price = models.IntegerField(null=True)  # в копейках
 
     def booking_end_time(self):
         return self.booking_start_time + self.duration
-    
+
     class Meta:
         verbose_name_plural = "Брони"
 
@@ -160,7 +162,7 @@ class Booking(models.Model):
 
 class Transaction(models.Model):
     booking = models.ForeignKey(to=Booking, on_delete=models.CASCADE)
-    payment_id = models.CharField(max_length=50, db_index=True) # API ID
+    payment_id = models.CharField(max_length=50, db_index=True)  # API ID
     secret_key = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
 
     TRANSACTION_STATUS_CHOICES = [
@@ -186,6 +188,8 @@ class Transaction(models.Model):
 class Comment(models.Model):
     parking = models.ForeignKey(to=Parking, null=False, on_delete=models.CASCADE)
     text = models.TextField(null=False)
+    fio = models.TextField(null=False)
+    rating = models.IntegerField(null=False)
 
     def __str__(self):
         return f"Comment: {self.text}"

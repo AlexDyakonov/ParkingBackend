@@ -70,4 +70,4 @@ class ParkomatSerializer(ModelSerializer):
 class CommentSerializer(ModelSerializer):
     class Meta:
         model = Comment
-        fields = ('text',)
+        fields = ('text', 'fio', 'rating')

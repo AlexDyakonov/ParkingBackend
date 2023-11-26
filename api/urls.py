@@ -15,7 +15,7 @@ urlpatterns = [
     path('parkomats', views.get_parkomats, name="parkomats"),
 
     path('parkings/<int:parking_id>/comments', views.get_comments, name="comments"),
-    path('parkings/<int:parking_id>/comments', views.put_comment, name="put_comment"),
+    path('parkings/<int:parking_id>/comments/add', views.put_comment, name="put_comment"),
 
     path('parkings/<int:parking_id>/reserve', views.parking_reserve, name="parking-reserve"),
     path('payment/status', views.payment_status, name="payment-status"),
