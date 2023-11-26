@@ -4,7 +4,8 @@ from rest_framework.response import Response
 from .models import Parking, Parkomat, Terminal, Comment, Booking, ParkingSpot
 from .serializer import ParkingSerializer, TerminalSerializer, ParkomatSerializer, CommentSerializer
 from rest_framework import status
-from .utils import load_parkings_from_ek, create_payment, get_payment_link, get_payment_status, get_payment_id, payment_status_handler, update_parking_spots
+from .utils import load_parkings_from_ek, create_payment, get_payment_link, get_payment_status, get_payment_id, \
+    payment_status_handler, update_parking_spots
 from datetime import timedelta
 
 
@@ -80,6 +81,11 @@ def get_terminals(request):
 
 
 @api_view(['GET'])
+def payment_succeed(request):
+    return Response()
+
+
+@api_view(['GET'])
 def get_parkomats(request):
     parkomats = Parkomat.objects.all()
     serializer = ParkomatSerializer(parkomats, many=True)
@@ -147,13 +153,13 @@ def put_ek(request):
 #         payment_status = data.get("object", {}).get("status")
 
 #         if payment_status == 'pending':
-            
+
 #         elif payment_status == 'waiting_for_capture':
-            
+
 #         elif payment_status == 'succeeded':
-            
+
 #         elif payment_status == 'canceled':
-            
+
 #         else:
 #             print('Unexpected')
 

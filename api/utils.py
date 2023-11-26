@@ -25,7 +25,7 @@ def create_payment(booking):
         },
             "confirmation": {
             "type": "redirect",
-            "return_url": "https://youtu.be/dQw4w9WgXcQ"
+            "return_url": "https://172.232.44.175/payment_succeed"
         },
             "capture": True,
             "description": booking.credentials
