@@ -1,8 +1,22 @@
-from .models import Coordinate, Location, Category, Price, Parking, Transaction
+from .models import Coordinate, Location, Category, Price, Parking, Transaction, ParkingSpot, Booking
 from yookassa import Payment
 import uuid
+from django.utils import timezone
+
+def update_parking_spots(parking):
+    parking_spots = ParkingSpot.objects.filter(parking=parking, is_reserved=True, is_empty=False)
+    for spot in parking_spots:
+        active_bookings = Booking.objects.filter(parking_spot=spot, booking_end_time__lt=timezone.now())
+        if active_bookings.exists():
+            spot.is_reserved = False
+            spot.is_empty = True
+            spot.save()
 
 def create_payment(booking):
+    transactions = Transaction.objects.filter(booking=booking, transaction_status='pending')
+    if transactions.exists():
+        return Payment.find_one(transactions.payment_id)
+
     value = booking.total_price/100
     payment = Payment.create({
         "amount": {
@@ -20,6 +34,7 @@ def create_payment(booking):
     transaction = Transaction.objects.get_or_create(
         booking=booking,
         payment_id=payment.id,
+        payment_url=payment.confirmation.confirmation_url,
         transaction_status='pending',
     )
     transaction[0].save()
@@ -117,7 +132,11 @@ def payment_status_handler(payment_id, payment_status):
         transaction.transaction_status = 'paid'
     elif payment_status == 'canceled':
         transaction.transaction_status = 'failed'
+        parking_spot = transaction.booking.parking_spot
+        parking_spot.is_reserved = False
+        parking_spot.is_empty = True
+        parking_spot.save()
     else:
         print('Unexpected')
-        
+
     transaction.save()

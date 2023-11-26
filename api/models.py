@@ -147,10 +147,11 @@ class Booking(models.Model):
     credentials = models.CharField(max_length=50, null=False)
     booking_start_time = models.DateTimeField(auto_now_add=True,
                                               null=False)  # booking - время, когда машина стоит на парковке
+    booking_end_time = models.DateTimeField(auto_now_add=False, null=True) 
     duration = models.DurationField(null=False, default=timedelta(hours=1))
     total_price = models.IntegerField(null=True)  # в копейках
 
-    def booking_end_time(self):
+    def booking_end_time_fun(self):
         return self.booking_start_time + self.duration
 
     class Meta:
@@ -159,10 +160,16 @@ class Booking(models.Model):
     def __str__(self):
         return f"Booking for Parking {self.parking_spot} started at {self.booking_start_time} for {self.credentials}"
 
+@receiver(post_save, sender=Booking)
+def insert_booking_end_time(sender, instance, created, **kwargs):
+    if created:
+        instance.booking_end_time = instance.booking_start_time + instance.duration
+        instance.save()
 
 class Transaction(models.Model):
     booking = models.ForeignKey(to=Booking, on_delete=models.CASCADE)
     payment_id = models.CharField(max_length=50, db_index=True)  # API ID
+    payment_url = models.CharField(max_length=120, db_index=True) # API URL
     secret_key = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
 
     TRANSACTION_STATUS_CHOICES = [

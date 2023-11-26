@@ -19,5 +19,4 @@ urlpatterns = [
 
     path('parkings/<int:parking_id>/reserve', views.parking_reserve, name="parking-reserve"),
     path('payment/status', views.payment_status, name="payment-status"),
-    # path('yookassa-webhook', views.yookassa_webhook, neme="yookassa-webhook"),
 ]
